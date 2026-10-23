@@ -480,7 +480,7 @@ impl Printer<'_, '_> {
         };
         self.start_group("alias outer ")?;
         if let Some(name) = outer.name.as_ref() {
-            name.write(self)?;
+            name.write_identifier(self)?;
         } else {
             write!(self.result, "{count}")?;
         }
@@ -1445,7 +1445,7 @@ impl Printer<'_, '_> {
                 };
                 self.start_group("alias outer ")?;
                 if let Some(name) = outer.name.as_ref() {
-                    name.write(self)?;
+                    name.write_identifier(self)?;
                 } else {
                     write!(self.result, "{count}")?;
                 }
