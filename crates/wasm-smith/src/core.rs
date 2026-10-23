@@ -205,6 +205,32 @@ impl Module {
         Self::new_internal(config, u, DuplicateImportsBehavior::Allowed)
     }
 
+    /// Returns the module and field names of this module's imports and the
+    /// names of its exports.
+    #[cfg(feature = "component-model")]
+    pub(crate) fn import_export_names(&self) -> Vec<&str> {
+        let mut names = Vec::new();
+        for imports in &self.imports {
+            match imports {
+                Imports::Single(import) => names.extend([&*import.module, &*import.name]),
+                Imports::Compact1 { module, items } => {
+                    names.push(module);
+                    names.extend(items.iter().map(|import| &*import.name));
+                }
+                Imports::Compact2 {
+                    module,
+                    names: items,
+                    ..
+                } => {
+                    names.push(module);
+                    names.extend(items.iter().map(|name| &**name));
+                }
+            }
+        }
+        names.extend(self.exports.iter().map(|(name, ..)| &**name));
+        names
+    }
+
     pub(crate) fn new_internal(
         config: Config,
         u: &mut Unstructured<'_>,
